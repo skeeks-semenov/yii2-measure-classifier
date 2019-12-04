@@ -1,6 +1,8 @@
 Yii2 measure classifier
 ===================================
 
+This is measure classfier from bitrix.
+
 Links
 ------
 * [Web site](https://cms.skeeks.com)

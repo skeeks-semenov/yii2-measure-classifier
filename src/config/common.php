@@ -9,14 +9,14 @@ return [
 
     'components' => [
         'measureClassifier' => [
-            'class' => 'skeeks\cms\measureClassifier\MeasureClassifierComponent',
+            'class' => 'skeeks\yii2\measureClassifier\MeasureClassifierComponent',
         ],
 
         'i18n' => [
             'translations' => [
                 'skeeks/measureClassifier' => [
                     'class'    => 'yii\i18n\PhpMessageSource',
-                    'basePath' => '@skeeks/cms/measureClassifier/messages',
+                    'basePath' => '@skeeks/yii2/measureClassifier/messages',
                     'fileMap'  => [
                         'skeeks/measureClassifier' => 'classifier.php',
                     ],
