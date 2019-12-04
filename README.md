@@ -11,6 +11,9 @@ Links
 
 ```php
 
+print_r(\Yii::$app->measureClassifier->data);
+
+print_r(\Yii::$app->measureClassifier->getMeasureInfoByCode('006'));
 
 ```
 ___
