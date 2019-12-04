@@ -8,16 +8,48 @@
 
 namespace skeeks\yii2\measureClassifier;
 
+use skeeks\yii2\measureClassifier\models\Measure;
 use yii\base\Component;
+use yii\base\Model;
+use yii\helpers\ArrayHelper;
 
 /**
  * @property array $data;
+ * @property array $dataList;
  *
  * @author Semenov Alexander <semenov@skeeks.com>
  */
 class MeasureClassifierComponent extends Component
 {
     protected $_unitsClassifier = null;
+
+    public function getDataForSelect()
+    {
+        $result = [];
+
+        foreach ($this->data as $key => $data)
+        {
+            $title1 = ArrayHelper::getValue($data, 'title');
+            ArrayHelper::remove($data, 'title');
+            
+            foreach ($data as $subKey => $subData)
+            {
+                $title = ArrayHelper::getValue($subData, 'title') . " - " . $title1;
+                ArrayHelper::remove($subData, 'title');
+                $tmpArr = [];
+                
+                foreach ((array) $subData as $measureKey => $measure)
+                {
+                    $tmpArr[ArrayHelper::getValue($measure, 'code')] = ArrayHelper::getValue($measure, 'name') . " (" . ArrayHelper::getValue($measure, 'symbol') . ") " . "[" . ArrayHelper::getValue($measure, 'code') . "]";
+                }
+                
+                $result[$title] = $tmpArr;
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @return array
      */
@@ -3807,9 +3839,37 @@ class MeasureClassifierComponent extends Component
                     ],
             ];
 
+        $this->_unitsClassifier = $unitsClassifier;
+        
         return $this->_unitsClassifier;
     }
 
+    /**
+     * @return array
+     */
+    public function getDataList()
+    {
+        $result = [];
+        
+        foreach ($this->data as $subSection)
+        {
+            foreach ($subSection as $measureList) {
+                if (!is_array($measureList)) {
+                    continue;
+                }
+                
+                ArrayHelper::remove($measureList, 'title');
+                
+                foreach ($measureList as $key => $measureData)
+                {
+                    $result[(string) ArrayHelper::getValue($measureData, 'code')] = $measureData;
+                }
+            
+            }
+        }
+        
+        return $result;
+    }
 
     /**
      * @param $findCode
@@ -3817,21 +3877,20 @@ class MeasureClassifierComponent extends Component
      */
     public function getMeasureInfoByCode($findCode)
     {
-        $result = null;
-        $findCode = (int)$findCode;
-        if (0 < $findCode) {
-            foreach ($this->data as $subSection) {
-                foreach ($subSection as $measureList) {
-                    if (!is_array($measureList)) {
-                        continue;
-                    }
-                    if (isset($measureList[$findCode]) && isset($measureList[$findCode]['code']) && (int)$measureList[$findCode]['code'] === $findCode) {
-                        $result = $measureList[$findCode];
-                        break 2;
-                    }
-                }
-            }
+        return (array) ArrayHelper::getValue($this->dataList, $findCode);
+    }
+
+    /**
+     * @param $findCode
+     * @return Measure|null
+     */
+    public function getMeasureByCode($findCode)
+    {
+        $data = $this->getMeasureInfoByCode($findCode);
+        if (!$data) {
+            return null;
         }
-        return $result;
+        
+        return new Measure($data);
     }
 }
