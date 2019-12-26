@@ -3882,6 +3882,22 @@ class MeasureClassifierComponent extends Component
 
     /**
      * @param $findCode
+     * @return array
+     */
+    public function getMeasureInfoBySymbol($findCode)
+    {
+        foreach ($this->dataList as $key => $row)
+        {
+            if (ArrayHelper::getValue($row, 'symbol') == $findCode) {
+                return $row;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @param $findCode
      * @return Measure|null
      */
     public function getMeasureByCode($findCode)
@@ -3891,6 +3907,19 @@ class MeasureClassifierComponent extends Component
             return null;
         }
         
+        return new Measure($data);
+    }
+    /**
+     * @param $findCode
+     * @return Measure|null
+     */
+    public function getMeasureBySymbol($findCode)
+    {
+        $data = $this->getMeasureInfoBySymbol($findCode);
+        if (!$data) {
+            return null;
+        }
+
         return new Measure($data);
     }
 }
